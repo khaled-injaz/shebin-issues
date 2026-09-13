@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مشاكل شوارعنا - شبين الكوم</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F2E9;
+    --ink:#1E2A38;
+    --navy:#1B3A5C;
+    --navy-deep:#122842;
+    --ochre:#C97A2B;
+    --ochre-light:#F0DCC0;
+    --line:#D8D0BE;
+    --green:#4B7752;
+    --danger:#B3432B;
+    --muted:#6C6559;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Tajawal', sans-serif;
+    line-height:1.7;
+  }
+  .wrap{max-width:480px; margin:0 auto; padding:0 20px 60px;}
+  .stripe{
+    height:10px;
+    background:repeating-linear-gradient(90deg, var(--navy) 0 24px, var(--ochre) 24px 48px);
+  }
+  header{padding:32px 0 20px;}
+  h1{
+    font-family:'Cairo', sans-serif;
+    font-weight:800;
+    font-size:28px;
+    color:var(--navy-deep);
+    margin:0 0 10px;
+  }
+  .sub{font-size:15px; color:var(--muted); margin:0; max-width:38ch;}
+  .place-tag{
+    display:inline-block;
+    margin-top:14px;
+    font-family:'Cairo', sans-serif;
+    font-weight:600;
+    font-size:13px;
+    color:var(--navy-deep);
+    background:var(--ochre-light);
+    border:1px solid var(--ochre);
+    border-radius:4px;
+    padding:4px 12px;
+  }
+  section{margin-top:28px;}
+  .field-label{
+    font-family:'Cairo', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    color:var(--navy-deep);
+    margin-bottom:10px;
+    display:block;
+  }
+  .chips{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  .chip{
+    border:1.5px solid var(--line);
+    background:#fff;
+    border-radius:8px;
+    padding:10px 8px;
+    font-family:'Tajawal', sans-serif;
+    font-size:13.5px;
+    color:var(--ink);
+    cursor:pointer;
+    text-align:center;
+    transition:border-color .15s, background .15s;
+  }
+  .chip.selected{
+    border-color:var(--navy);
+    background:var(--navy);
+    color:#fff;
+    font-weight:700;
+  }
+  textarea, input[type="text"]{
+    width:100%;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    padding:12px 14px;
+    font-family:'Tajawal', sans-serif;
+    font-size:15px;
+    background:#fff;
+    color:var(--ink);
+    resize:vertical;
+  }
+  textarea:focus, input[type="text"]:focus, .chip:focus-visible{
+    outline:none;
+    border-color:var(--navy);
+    box-shadow:0 0 0 3px rgba(27,58,92,0.15);
+  }
+  textarea{min-height:90px;}
+  .error-text{color:var(--danger); font-size:13px; margin-top:6px; display:none;}
+  .submit-btn{
+    width:100%;
+    margin-top:24px;
+    background:var(--navy);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    padding:15px;
+    font-family:'Cairo', sans-serif;
+    font-weight:700;
+    font-size:16px;
+    cursor:pointer;
+  }
+  .submit-btn:active{background:var(--navy-deep);}
+  .submit-btn:disabled{background:var(--line); color:var(--muted); cursor:not-allowed;}
+  .thanks{
+    display:none;
+    margin-top:24px;
+    background:#fff;
+    border:1.5px solid var(--green);
+    border-radius:10px;
+    padding:18px;
+    text-align:center;
+  }
+  .thanks strong{font-family:'Cairo', sans-serif; color:var(--green); font-size:16px;}
+  .count-line{font-size:13px; color:var(--muted); margin-top:8px;}
+  .toggle-report{
+    margin-top:36px;
+    text-align:center;
+    border-top:1px solid var(--line);
+    padding-top:20px;
+  }
+  .toggle-report button{
+    background:none;
+    border:none;
+    color:var(--navy);
+    font-family:'Cairo', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    text-decoration:underline;
+    cursor:pointer;
+    padding:8px;
+  }
+  #reportView{display:none; margin-top:20px;}
+  .report-card{
+    background:#fff;
+    border-radius:10px;
+    border:1px solid var(--line);
+    padding:16px 18px;
+    margin-bottom:14px;
+  }
+  .report-card .cat-name{
+    font-family:'Cairo', sans-serif;
+    font-weight:700;
+    font-size:15px;
+    color:var(--navy-deep);
+  }
+  .report-card .cat-count{
+    font-size:13px;
+    color:var(--ochre);
+    font-weight:700;
+    margin-right:6px;
+  }
+  .report-card .solution{
+    font-size:13.5px;
+    color:var(--muted);
+    margin-top:8px;
+    border-right:3px solid var(--ochre);
+    padding-right:10px;
+  }
+  .report-card details{margin-top:10px;}
+  .report-card summary{font-size:13px; color:var(--navy); cursor:pointer;}
+  .report-card .item{font-size:13.5px; margin-top:8px; color:var(--ink);}
+  .report-card .item .loc{color:var(--muted); font-size:12px;}
+  .empty-report{text-align:center; color:var(--muted); font-size:14px; padding:30px 0;}
+  .report-meta{font-size:13px; color:var(--muted); text-align:center; margin-bottom:16px;}
+  .tabs{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:26px;}
+  .tab-btn{
+    border:1.5px solid var(--line);
+    background:#fff;
+    border-radius:8px;
+    padding:12px 8px;
+    font-family:'Cairo', sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    color:var(--muted);
+    cursor:pointer;
+  }
+  .tab-btn.active{border-color:var(--navy); background:var(--navy); color:#fff;}
+  .opportunity-card{
+    background:var(--navy-deep);
+    color:#fff;
+    border-radius:10px;
+    padding:18px;
+    margin-bottom:18px;
+  }
+  .opportunity-card .label{font-family:'Cairo', sans-serif; font-weight:700; font-size:13px; color:var(--ochre-light); display:block; margin-bottom:6px;}
+  .opportunity-card .value{font-size:15px; line-height:1.7;}
+  .lock-box{background:#fff; border:1.5px solid var(--line); border-radius:10px; padding:24px; text-align:center;}
+  .lock-box input{margin-bottom:12px;}
+  .lock-box button{background:var(--navy); color:#fff; border:none; border-radius:8px; padding:10px 20px; font-family:'Cairo', sans-serif; font-weight:600; cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="stripe"></div>
+<div class="wrap">
+
+  <header>
+    <h1>إيه اللي بيصعب عليك؟</h1>
+    <p class="sub">احكيلنا عن مشكلة بتقابلك في شارعك، أو مشكلة بتواجهك في شغلك.</p>
+    <span class="place-tag">شبين الكوم - المنوفية</span>
+  </header>
+
+  <section id="formSection">
+    <div class="tabs" id="typeTabs">
+      <button type="button" class="tab-btn active" data-type="street">مشكلة في الشارع</button>
+      <button type="button" class="tab-btn" data-type="work">مشكلة في شغلك</button>
+    </div>
+
+    <div style="margin-bottom:22px;">
+      <span class="field-label">نوع المشكلة</span>
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <div style="margin-bottom:22px;">
+      <span class="field-label" id="descLabel">احكيلنا التفاصيل</span>
+      <textarea id="description" placeholder="مثال: الرصيف مكسور قدام مدرسة العبور من شهرين ومحدش بيصلحه"></textarea>
+      <p class="error-text" id="descError">اكتب وصف مختصر للمشكلة (5 حروف على الأقل)</p>
+    </div>
+
+    <div style="margin-bottom:8px;">
+      <span class="field-label" id="locationLabel">الشارع أو الحي (اختياري)</span>
+      <input type="text" id="location" placeholder="مثال: شارع سعد زغلول">
+    </div>
+
+    <button class="submit-btn" id="submitBtn">شارك المشكلة</button>
+    <p class="error-text" id="catError">اختار نوع المشكلة الأول</p>
+
+    <div class="thanks" id="thanksBox">
+      <strong>تمام، وصلتنا مشكلتك</strong>
+      <p class="count-line" id="countLine"></p>
+    </div>
+  </section>
+
+  <div class="toggle-report">
+    <button id="showReportBtn">شوف تقرير الأسبوع</button>
+  </div>
+
+  <div id="lockBox" class="lock-box" style="display:none;">
+    <p style="margin:0 0 12px; font-size:14px; color:var(--muted);">التقرير ده ليك انت بس، اكتب كلمة المرور</p>
+    <input type="text" id="reportPassword" placeholder="كلمة المرور">
+    <p class="error-text" id="lockError">كلمة المرور غلط</p>
+    <button id="unlockBtn">دخول</button>
+  </div>
+
+  <div id="reportView"></div>
+
+</div>
+
+<script>
+const STREET_CATEGORIES = [
+  {id:'roads', name:'طرق ورصف', solution:'توثيق موقع العطل بالصور وتقديم بلاغ لمجلس مدينة شبين الكوم عبر رقم الخط الساخن أو مكتب الأحياء، مع تجميع توقيعات من سكان الشارع لتسريع الاستجابة.'},
+  {id:'trash', name:'نظافة وقمامة', solution:'التنسيق مع شركة النظافة التابعة للحي لتحديد مواعيد رفع ثابتة، واقتراح نقطة تجميع مؤقتة بديلة لحد ما تتحل.'},
+  {id:'water', name:'مياه وصرف', solution:'الإبلاغ لشركة مياه الشرب والصرف الصحي بالمنوفية مباشرة، فده أسرع من انتظار الحل عبر الحي.'},
+  {id:'power', name:'كهرباء وإنارة', solution:'بلاغ لشركة كهرباء شمال الدلتا برقم العمود أو أقرب علامة، والإنارة تحديدًا بتتحل أسرع لو البلاغ من أكتر من شخص في نفس الوقت.'},
+  {id:'traffic', name:'مرور وازدحام', solution:'اقتراح محدد (كاميرا، لافتة، مطب) لمرور المنوفية بدل الشكوى العامة، وده بيزود فرصة إنه يتنفذ.'},
+  {id:'safety', name:'أمان وأمن', solution:'التواصل مع أقرب قسم شرطة أو نقطة أمن، وتفعيل تجمع سكان الشارع على واتساب لتبادل الملاحظات.'},
+  {id:'services', name:'خدمات عامة', solution:'تحديد الجهة المسؤولة (تعليم، صحة، مرافق) بدقة والتوجه لمديرية الخدمة المعنية بالمنوفية.'},
+  {id:'other', name:'حاجة تانية', solution:'وصف المشكلة بالتفصيل يساعد في تحديد الجهة الصح اللي تتحل من خلالها.'}
+];
+const WORK_CATEGORIES = [
+  {id:'tools', name:'أدوات وبرامج', solution:'ده مؤشر إن ممكن تعمل أداة أو خدمة بسيطة تسد الفجوة دي وتبيعها لأصحاب نفس الشغل.'},
+  {id:'clients', name:'عملاء وتسويق', solution:'مشكلة تسويقية متكررة ممكن تتحول لخدمة تسويق أو أداة مخصصة تقدمها كمنتج.'},
+  {id:'time', name:'وقت وتنظيم', solution:'فرصة لأداة أو نظام تنظيم بسيط يوفر وقت أصحاب نفس المهنة.'},
+  {id:'money', name:'دخل وتسعير', solution:'ممكن تعمل محتوى أو استشارة قصيرة تساعد ناس تانية تسعر شغلها صح.'},
+  {id:'tech', name:'مشكلة تقنية', solution:'مشكلة تقنية بتتكرر مع ناس كتير هي بالظبط نوع المشاكل اللي تستاهل تتحل بمنتج برمجي.'},
+  {id:'other-work', name:'حاجة تانية', solution:'وصف المشكلة بالتفصيل يساعد في تحديد لو ممكن تتحول لخدمة أو منتج.'}
+];
+const STORAGE_KEY = 'shebin-street-issues-v1';
+const REPORT_PASSWORD = '1234';
+let selectedCategory = null;
+let currentType = 'street';
+
+function activeCategories(){
+  return currentType === 'street' ? STREET_CATEGORIES : WORK_CATEGORIES;
+}
+
+function renderChips(){
+  const c = document.getElementById('chips');
+  c.innerHTML = '';
+  selectedCategory = null;
+  activeCategories().forEach(cat => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'chip';
+    btn.textContent = cat.name;
+    btn.addEventListener('click', () => {
+      selectedCategory = cat.id;
+      document.querySelectorAll('.chip').forEach(el => el.classList.remove('selected'));
+      btn.classList.add('selected');
+      document.getElementById('catError').style.display = 'none';
+    });
+    c.appendChild(btn);
+  });
+}
+
+document.querySelectorAll('.tab-btn').forEach(tabBtn => {
+  tabBtn.addEventListener('click', () => {
+    currentType = tabBtn.dataset.type;
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    tabBtn.classList.add('active');
+    renderChips();
+    if(currentType === 'work'){
+      document.getElementById('descLabel').textContent = 'احكيلنا عن المشكلة اللي بتقابلك في شغلك';
+      document.getElementById('description').placeholder = 'مثال: بضيع وقت كتير كل شهر في عمل الفواتير يدويًا';
+      document.getElementById('locationLabel').textContent = 'مجال شغلك (اختياري)';
+      document.getElementById('location').placeholder = 'مثال: تجارة إلكترونية';
+    } else {
+      document.getElementById('descLabel').textContent = 'احكيلنا التفاصيل';
+      document.getElementById('description').placeholder = 'مثال: الرصيف مكسور قدام مدرسة العبور من شهرين ومحدش بيصلحه';
+      document.getElementById('locationLabel').textContent = 'الشارع أو الحي (اختياري)';
+      document.getElementById('location').placeholder = 'مثال: شارع سعد زغلول';
+    }
+  });
+});
+
+async function submitIssue(){
+  const desc = document.getElementById('description').value.trim();
+  const descErr = document.getElementById('descError');
+  const catErr = document.getElementById('catError');
+  let valid = true;
+
+  if(!selectedCategory){
+    catErr.style.display = 'block';
+    valid = false;
+  } else {
+    catErr.style.display = 'none';
+  }
+
+  if(desc.length < 5){
+    descErr.style.display = 'block';
+    valid = false;
+  } else {
+    descErr.style.display = 'none';
+  }
+
+  if(!valid) return;
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'جاري الحفظ...';
+
+  try{
+    let list = [];
+    try{
+      const existing = await window.storage.get(STORAGE_KEY, true);
+      if(existing && existing.value) list = JSON.parse(existing.value);
+    }catch(e){
+      list = [];
+    }
+    list.push({
+      type: currentType,
+      category: selectedCategory,
+      description: desc,
+      location: document.getElementById('location').value.trim(),
+      ts: Date.now()
+    });
+    const res = await window.storage.set(STORAGE_KEY, JSON.stringify(list), true);
+    if(!res) throw new Error('save failed');
+
+    document.getElementById('formSection').querySelectorAll('input, textarea, .chip').forEach(el => {
+      if(el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') el.value = '';
+    });
+    document.querySelectorAll('.chip').forEach(el => el.classList.remove('selected'));
+    selectedCategory = null;
+    document.getElementById('countLine').textContent = 'إجمالي المشاكل المرصودة لحد دلوقتي: ' + list.length;
+    document.getElementById('thanksBox').style.display = 'block';
+    btn.textContent = 'شارك المشكلة';
+    btn.disabled = false;
+  }catch(err){
+    descErr.textContent = 'حصل خطأ وإحنا بنحفظ، جرب تاني.';
+    descErr.style.display = 'block';
+    btn.textContent = 'شارك المشكلة';
+    btn.disabled = false;
+  }
+}
+
+function renderGroup(title, items, categories){
+  const byCat = {};
+  items.forEach(item => {
+    if(!byCat[item.category]) byCat[item.category] = [];
+    byCat[item.category].push(item);
+  });
+  const sorted = Object.keys(byCat).sort((a,b) => byCat[b].length - byCat[a].length);
+  let html = '<p class="field-label">' + title + '</p>';
+  sorted.forEach(catId => {
+    const cat = categories.find(c => c.id === catId) || {name:'غير مصنف', solution:''};
+    const catItems = byCat[catId];
+    html += '<div class="report-card">';
+    html += '<span class="cat-name">' + cat.name + '</span><span class="cat-count">' + catItems.length + ' مرة</span>';
+    if(cat.solution) html += '<p class="solution">' + cat.solution + '</p>';
+    html += '<details><summary>شوف التفاصيل</summary>';
+    catItems.slice().reverse().forEach(it => {
+      html += '<div class="item">' + it.description;
+      if(it.location) html += ' <span class="loc">- ' + it.location + '</span>';
+      html += '</div>';
+    });
+    html += '</details></div>';
+  });
+  return html;
+}
+
+async function renderReport(){
+  const view = document.getElementById('reportView');
+  view.innerHTML = '<p class="report-meta">جاري تحميل التقرير...</p>';
+  view.style.display = 'block';
+
+  let list = [];
+  try{
+    const existing = await window.storage.get(STORAGE_KEY, true);
+    if(existing && existing.value) list = JSON.parse(existing.value);
+  }catch(e){
+    list = [];
+  }
+
+  if(list.length === 0){
+    view.innerHTML = '<p class="empty-report">لسه مفيش مشاكل متسجلة. لما الناس تبدأ تشارك، التقرير هيبان هنا.</p>';
+    return;
+  }
+
+  const streetItems = list.filter(it => it.type !== 'work');
+  const workItems = list.filter(it => it.type === 'work');
+
+  const byCatAll = {};
+  list.forEach(item => {
+    const key = item.type + '::' + item.category;
+    if(!byCatAll[key]) byCatAll[key] = [];
+    byCatAll[key].push(item);
+  });
+  const topKey = Object.keys(byCatAll).sort((a,b) => byCatAll[b].length - byCatAll[a].length)[0];
+  const topItems = byCatAll[topKey];
+  const topType = topItems[0].type;
+  const topCatList = topType === 'work' ? WORK_CATEGORIES : STREET_CATEGORIES;
+  const topCat = topCatList.find(c => c.id === topItems[0].category) || {name:'غير مصنف'};
+
+  let html = '<p class="report-meta">إجمالي ' + list.length + ' بلاغ (' + streetItems.length + ' شارع، ' + workItems.length + ' شغل)</p>';
+  html += '<div class="opportunity-card">';
+  html += '<span class="label">الأكتر تكرارًا</span>';
+  html += '<span class="value">"' + topCat.name + '" (' + (topType === 'work' ? 'شغل' : 'شارع') + ') اتكررت ' + topItems.length + ' مرة — دي أوضح نقطة تبدأ تركز عليها.</span>';
+  html += '</div>';
+
+  if(workItems.length > 0) html += renderGroup('مشاكل الشغل', workItems, WORK_CATEGORIES);
+  if(streetItems.length > 0) html += renderGroup('مشاكل الشارع', streetItems, STREET_CATEGORIES);
+
+  view.innerHTML = html;
+}
+
+document.getElementById('submitBtn').addEventListener('click', submitIssue);
+document.getElementById('showReportBtn').addEventListener('click', () => {
+  const view = document.getElementById('reportView');
+  const lockBox = document.getElementById('lockBox');
+  const isOpen = view.style.display === 'block';
+  if(isOpen){
+    view.style.display = 'none';
+    lockBox.style.display = 'none';
+    document.getElementById('showReportBtn').textContent = 'شوف تقرير الأسبوع';
+  } else {
+    lockBox.style.display = 'block';
+    document.getElementById('reportPassword').focus();
+    document.getElementById('showReportBtn').textContent = 'قفل التقرير';
+  }
+});
+document.getElementById('unlockBtn').addEventListener('click', () => {
+  const val = document.getElementById('reportPassword').value;
+  const lockError = document.getElementById('lockError');
+  if(val === REPORT_PASSWORD){
+    lockError.style.display = 'none';
+    document.getElementById('lockBox').style.display = 'none';
+    document.getElementById('reportPassword').value = '';
+    renderReport();
+  } else {
+    lockError.style.display = 'block';
+  }
+});
+
+renderChips();
+</script>
+</body>
+</html>
